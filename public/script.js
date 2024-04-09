@@ -60,45 +60,85 @@ const displayCraftDetails = (craft) => {
         li.innerHTML = supply;
         ul.appendChild(li);
     });
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit";
+    editButton.onclick = () => showEditCraftForm(craft);
+    craftDetails.appendChild(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = () => deleteCraft(craft._id);
+    craftDetails.appendChild(deleteButton);
+
 };
 
 const openDialog = (id) => {
     document.getElementById("dialog").style.display = "block";
-    document.querySelectorAll("#dialog-details > *").forEach((item)=> {
+    document.querySelectorAll("#dialog-details > *").forEach((item) => {
         item.classList.add("hidden");
     });
     document.getElementById(id).classList.remove("hidden");
-}
+};
 
 const showCraftForm = (e) => {
     e.preventDefault();
     resetForm();
-    document.getElementById("add-link").removeEventListener("click", displayCraftDetails); 
     openDialog("add-edit-craft-form");
 };
+
+const showEditCraftForm = (craft) => {
+    resetForm();
+    const form = document.getElementById("add-edit-craft-form");
+    form.dataset.mode = "edit"; 
+    form.dataset.craftId = craft._id; 
+
+    document.getElementById("name").value = craft.name;
+    document.getElementById("description").value = craft.description;
+    document.getElementById("img-prev").src = "images/" + craft.image;
+
+    const supplyBoxes = document.getElementById("supply-boxes");
+    supplyBoxes.innerHTML = ""; 
+
+    craft.supplies.forEach((supply) => {
+        addSupply(null, supply);
+    });
+
+    openDialog("add-edit-craft-form");
+};
+
+/*const resetForm = () => {
+    const form = document.getElementById("add-edit-craft-form");
+    form.reset();
+    document.getElementById("supply-boxes").innerHTML = "";
+    document.getElementById("img-prev").src = "";
+};*/
 
 const resetForm = () => {
     const form = document.getElementById("add-edit-craft-form");
     if (form) {
         form.reset();
-        document.getElementById("supply-boxes").innerHTML = "";
-        document.getElementById("img-prev").src = "";
+        const supplyBoxes = document.getElementById("supply-boxes");
+        if (supplyBoxes) {
+            supplyBoxes.innerHTML = "";
+        }
+        const imgPrev = document.getElementById("img-prev");
+        if (imgPrev) {
+            imgPrev.src = "";
+        }
     } else {
-        console.error("Form element not found");
+        console.error("Form element not found.");
     }
 };
 
-const addSupply = (e) => {
-    e.preventDefault();
+const addSupply = (e, supply = "") => {
+    if (e) e.preventDefault();
     const section = document.getElementById("supply-boxes");
     const input = document.createElement("input");
     input.type = "text";
+    input.value = supply;
     section.appendChild(input);
 };
-
-const populateEditForm = (craft) => {
-    const form = document.getElementById("add-edit-craft-form");
-}
 
 const addCraft = async (e) => {
     e.preventDefault();
@@ -106,21 +146,30 @@ const addCraft = async (e) => {
     const formData = new FormData(form);
     formData.append("supplies", getSupplies());
 
-    
-        const response = await fetch("/api/crafts", {
-            method: "POST",
+    let url = "/api/crafts";
+    let method = "POST";
+
+    if (form.dataset.mode === "edit") {
+        url += `/${form.dataset.craftId}`;
+        method = "PUT";
+    }
+
+    try {
+        const response = await fetch(url, {
+            method: method,
             body: formData
         });
 
-        if(response.status != 200){
-            console.log("error posting data");
+        if (!response.ok) {
+            throw new Error("Error adding/updating craft");
         }
 
-        await response.json();
         resetForm();
         document.getElementById("dialog").style.display = "none";
         showCrafts();
-    
+    } catch (error) {
+        console.error(error);
+    }
 };
 
 const getSupplies = () => {
@@ -134,10 +183,31 @@ const getSupplies = () => {
     return supplies.join(",");
 };
 
+const deleteCraft = async (craftId) => {
+    if (!confirm("Are you sure you want to delete this craft?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/crafts/${craftId}`, {
+            method: "DELETE"
+        });
+
+        if (!response.ok) {
+            throw new Error("Error deleting craft");
+        }
+
+        document.getElementById("dialog").style.display = "none";
+        showCrafts();
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 showCrafts();
 document.getElementById("add-link").onclick = showCraftForm;
 document.getElementById("add-supply").onclick = addSupply;
-document.getElementById("add-edit-craft-form").onsubmit = addCraft;
+
 document.getElementById("img").onchange = (e) => {
     const prev = document.getElementById("img-prev");
 

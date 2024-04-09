@@ -19,10 +19,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/index.html");
-});
-
 let crafts = [
     {
         _id: 1,
@@ -311,31 +307,61 @@ let crafts = [
     }
 ]
 
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
+
 app.get("/api/crafts", (req, res) => {
     res.send(crafts);
-})
+});
 
 app.post("/api/crafts", upload.single("img"), (req, res) => {
     const result = validateCraft(req.body);
 
-    if(result.error){
-        res.status(400).send(result.error.deatils[0].message);
-        return;
+    if (result.error) {
+        return res.status(400).send(result.error.details[0].message);
     }
 
     const craft = {
         _id: crafts.length + 1,
         name: req.body.name,
+        image: req.file.filename,
         description: req.body.description,
         supplies: req.body.supplies.split(","),
     };
 
-    if(req.file){
-        recipe.img = "images/" + req.file.filename;
-    }
-
     crafts.push(craft);
     res.send(craft);
+});
+
+app.put("/api/crafts/:id", (req, res) => {
+    const craftId = parseInt(req.params.id);
+    const craftIndex = crafts.findIndex(craft => craft._id === craftId);
+    if (craftIndex === -1) {
+        return res.status(404).send("Craft not found.");
+    }
+
+    const result = validateCraft(req.body);
+    if (result.error) {
+        return res.status(400).send(result.error.details[0].message);
+    }
+
+    crafts[craftIndex].name = req.body.name;
+    crafts[craftIndex].description = req.body.description;
+    crafts[craftIndex].supplies = req.body.supplies.split(",");
+
+    res.send(crafts[craftIndex]);
+});
+
+app.delete("/api/crafts/:id", (req, res) => {
+    const craftId = parseInt(req.params.id);
+    const craftIndex = crafts.findIndex(craft => craft._id === craftId);
+    if (craftIndex === -1) {
+        return res.status(404).send("Craft not found.");
+    }
+
+    const deletedCraft = crafts.splice(craftIndex, 1);
+    res.send(deletedCraft);
 });
 
 const validateCraft = (craft) => {
@@ -346,9 +372,8 @@ const validateCraft = (craft) => {
         supplies: Joi.allow(),
     });
     return schema.validate(craft);
-
 };
 
 app.listen(3000, () => {
     console.log("Im listening");
-})
+});
