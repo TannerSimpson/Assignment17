@@ -9,18 +9,23 @@ const cors = require("cors");
 app.use(cors());
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./public/images/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
+    destination: (req, file, cb) => {
+        cb(null, "./public/images/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({storage: storage});
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
 
 let crafts = [
     {
+        _id: 1,
         "name": "Beaded JellyFish",
         "image": "bead-jellyfish.jpg",
         "description": "Create a hanging jellyfish using eggcartons and multicolored beads",
@@ -31,6 +36,7 @@ let crafts = [
         ]
     },
     {
+        _id: 2,
         "name": "Character Bookmarks",
         "image": "bookmarks.jpeg",
         "description": "Create a little birdy bookmark to always remin you were you were",
@@ -41,6 +47,7 @@ let crafts = [
         ]
     },
     {
+        _id: 3,
         "name": "Button Flowers",
         "image": "button-flowers.jpeg",
         "description": "Create a fun bouquet of flowers with your favorite buttons",
@@ -52,6 +59,7 @@ let crafts = [
         ]
     },
     {
+        _id: 4,
         "name": "Cheerio Necklaces",
         "image": "cheerio-necklace.webp",
         "description": "Create a fun and edible necklace",
@@ -61,6 +69,7 @@ let crafts = [
         ]
     },
     {
+        _id: 5,
         "name": "Cotton Ball Cupcakes",
         "image": "cotton-ball-cupcakes.webp",
         "description": "Decorate your fun filled cupcake however you want.",
@@ -71,7 +80,8 @@ let crafts = [
             "Glitter"
         ]
     },
-    {
+    {   
+        _id: 6,
         "name": "School Themed Mason Jars",
         "image": "decorated-jars.jpeg",
         "description": "Let's make mason jars to ",
@@ -83,6 +93,7 @@ let crafts = [
         ]
     },
     {
+        _id: 7,
         "name": "Egg Carton Flowers",
         "image": "egg-carton-flowers.jpg",
         "description": "Make a beautiful bouquet with egg cartons and other items you can find around the house",
@@ -95,6 +106,7 @@ let crafts = [
         ]
     },
     {
+        _id: 8,
         "name": "Finger Puppets",
         "image": "finger-puppets.jpeg",
         "description": "These little critters are easy to make, and will entertain your little one while they make a show.",
@@ -105,6 +117,7 @@ let crafts = [
         ]
     },
     {
+        _id: 9,
         "name": "Ribbon Flower Headbands",
         "image": "flower-headbands.jpg",
         "description": "Let your little one show off her new style with these pretty and customizable headbands",
@@ -116,6 +129,7 @@ let crafts = [
         ]
     },
     {
+        _id: 10,
         "name": "Hand Print Fish Puppets",
         "image": "handprint-fish.jpg",
         "description": "We all need to take every opportunity we can to remember those tiny hands, and what better way to do it, then to make fish puppets!",
@@ -127,6 +141,7 @@ let crafts = [
         ]
     },
     {
+        _id: 11,
         "name": "Hand Print Tree",
         "image": "hand-print-tree.jpeg",
         "description": "This is a fun way to get your little one into finger painting.",
@@ -136,6 +151,7 @@ let crafts = [
         ]
     },
     {
+        _id: 12,
         "name": "Melted Bead Bowl",
         "image": "melted-bead-bowl.jpeg",
         "description": "All they need to do is shape their faviorte design, warm it up and they have a brand new bowl.",
@@ -146,6 +162,7 @@ let crafts = [
         ]
     },
     {
+        _id: 13,
         "name": "Monster Kites",
         "image": "monster-rolls.jpg",
         "description": "Let's make those scary toilet paper rolls fly!",
@@ -157,6 +174,7 @@ let crafts = [
         ]
     },
     {
+        _id: 14,
         "name": "Pool Noodle Boats",
         "image": "noodle-boats.png",
         "description": "Let's make a boat that will actually float, due to the floating bottom of a pool noodle.",
@@ -167,6 +185,7 @@ let crafts = [
         ]
     },
     {
+        _id: 15,
         "name": "Paper Plate Bees",
         "image": "paper-plate-bees.jpeg",
         "description": "Let's have fun with making cute little bees, or big bees actually.",
@@ -180,6 +199,7 @@ let crafts = [
         ]
     },
     {
+        _id: 16,
         "name": "Paper Plate Dinosaurs",
         "image": "paper-plate-dinosaurs.jpg",
         "description": "Who would have thought that half a paper plate would be the base of a dinosaur.",
@@ -191,6 +211,7 @@ let crafts = [
         ]
     },
     {
+        _id: 17,
         "name": "Porcupine Leafs",
         "image": "porcupine-leaf.webp",
         "description": "Let's turn an ordinary paper plate into a fun filled mask.",
@@ -202,6 +223,7 @@ let crafts = [
         ]
     },
     {
+        _id: 18,
         "name": "Rainbow Cloud",
         "image": "rainbow-cloud.webp",
         "description": "Some cotton and color and you'll have a beautiful rainbow.",
@@ -212,6 +234,7 @@ let crafts = [
         ]
     },
     {
+        _id: 19,
         "name": "Fun Shaped Crayons",
         "image": "shaped-crayons.jpg",
         "description": "Let's melt some crayons together and let them harden into fun shapes.",
@@ -221,6 +244,7 @@ let crafts = [
         ]
     },
     {
+        _id: 20,
         "name": "Straw Farris Wheel",
         "image": "straw-faris-wheel.jpg",
         "description": "It might be too small to ride, but this farris wheel is the most colorful of all.",
@@ -230,6 +254,7 @@ let crafts = [
         ]
     },
     {
+        _id: 21,
         "name": "Sunny String",
         "image": "sun-string.jpg",
         "description": "Let's practice our fine motor skills while we weave the string into a fun sun.",
@@ -241,6 +266,7 @@ let crafts = [
         ]
     },
     {
+        _id: 22,
         "name": "Tissue Ballerinas",
         "image": "tisue-dancer.jpeg",
         "description": "These beautiful dancers will look great on display",
@@ -251,6 +277,7 @@ let crafts = [
         ]
     },
     {
+        _id: 23,
         "name": "Toilet Paper Roll Animals",
         "image": "toilet-paper-animals.jpeg",
         "description": "These beautiful dancers will look great on display",
@@ -261,6 +288,7 @@ let crafts = [
         ]
     },
     {
+        _id: 24,
         "name": "Toilet Paper Butterfly",
         "image": "toilet-paper-butterfly.jpg",
         "description": "Such a sweat little flyer",
@@ -272,6 +300,7 @@ let crafts = [
         ]
     },
     {
+        _id: 25,
         "name": "Valentines Jar",
         "image": "valentines-jar.webp",
         "description": "So much hearts all in one",
@@ -280,47 +309,46 @@ let crafts = [
             "Glitter"
         ]
     }
-  ];
+]
 
-app.get("/", (req, res)=>{
-    res.sendFile(__dirname + "/index.html");
-});
-
-app.get("/api/crafts", (req, res)=>{
+app.get("/api/crafts", (req, res) => {
     res.send(crafts);
-});
+})
 
 app.post("/api/crafts", upload.single("img"), (req, res) => {
-  const result = validateCraft(req.body);
+    const result = validateCraft(req.body);
 
-  if(result.error){
-    res.status(400).send(result.error.details[0].message);
-  }
-
-    const craft = {
-      name: req.body.name,
-      description:req.body.description,
-      supplies:req.body.supplies.split(",")
+    if(result.error){
+        res.status(400).send(result.error.deatils[0].message);
+        return;
     }
 
+    const craft = {
+        _id: crafts.length + 1,
+        name: req.body.name,
+        description: req.body.description,
+        supplies: req.body.supplies.split(","),
+    };
+
     if(req.file){
-      craft.img = "images/" + req.file.filename;
+        recipe.img = "images/" + req.file.filename;
     }
 
     crafts.push(craft);
-    res.send(crafts);
+    res.send(craft);
 });
 
-const validateCrafts = (craft) => {
-  const schema = Joi.object({
-    name:Joi.string().min(3).required(),
-    description:Joi.string().min(3).required(),
-    supplies:Joi.allow(""),
-  });
+const validateCraft = (craft) => {
+    const schema = Joi.object({
+        _id: Joi.allow(""),
+        name: Joi.string().min(3).required(),
+        description: Joi.string().min(3).required(),
+        supplies: Joi.allow(),
+    });
+    return schema.validate(craft);
 
-  return schema.validate(craft);
 };
 
-app.listen(3000, ()=> {
-    console.log("I'm listening");
-});
+app.listen(3000, () => {
+    console.log("Im listening");
+})
